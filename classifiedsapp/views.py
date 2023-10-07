@@ -93,7 +93,8 @@ class ReplyList(LoginRequiredMixin, ListView):
 
 
 def reply_create(request, pk):
-    text = 'test'
+    text = request.POST.get('text')
+    pk = request.POST.get('pk')
     classified = Classified.objects.get(pk=pk)
     user = request.user
     reply = Reply(text=text, classified=classified, author=user)
