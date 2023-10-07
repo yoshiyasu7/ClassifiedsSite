@@ -1,0 +1,65 @@
+{% extends 'default.html' %}
+
+{% load custom_tags %}
+
+{% block content %}
+    <h2>Отклики на ваши объявления.</h2>
+    {% if replies %}
+        <form action="" method="get">
+            {% csrf_token %}
+            {{ filterset.form.as_p }}
+            <input type="submit" class="mt-3 btn-primary" value="Найти" />
+        </form>
+        <hr>
+        <table>
+            <tr>
+                <td>Объявление</td>
+                <td>Отправитель</td>
+                <td>Текст отклика</td>
+                <td>Время отправки</td>
+                <td>Статус отклика</td>
+                <td>Ответ на отклик</td>
+            </tr>
+            {% for reply in replies %}
+                <tr>
+                    <td>{{ reply.classified }}</td>
+                    <td>{{ reply.author }}</td>
+                    <td>{{ reply.text }}</td>
+                    <td>{{ reply.created }}</td>
+                    <td>{{ reply.status }}</td>
+                    {% if reply.status == 'C' %}
+                    <td>
+                        <form action="{% url 'reply_set_status' %}?next={{ request.get_full_path }}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="pk" id="pk" value={{reply.pk}}>
+                            <input type="submit" class="mt-3 btn-primary" name="accept" value="Принять" />
+                            <input type="submit" name="reject" value="Отклонить" />
+                        </form>
+                    </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <h4>Откликов сейчас нет.</h4>
+    {% endif %}
+    {% if page_obj.has_previous %}
+        <a href="?{% url_replace page=1 %}">1</a>
+        {% if page_obj.previous_page_number != 1 %}
+            {% if page_obj.previous_page_number != 2 %}
+                ...
+            {% endif %}
+            <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+        {% endif %}
+    {% endif %}
+    {{ page_obj.number }}
+    {% if page_obj.has_next %}
+        <a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+        {% if paginator.num_pages != page_obj.next_page_number %}
+            {% if paginator.num_pages != page_obj.next_page_number|add:1 %}
+                ...
+            {% endif %}
+            <a href="?{% url_replace page=paginator.num_pages %}">{{ paginator.num_pages }}</a>
+        {% endif %}
+    {% endif %}
+{% endblock content %}

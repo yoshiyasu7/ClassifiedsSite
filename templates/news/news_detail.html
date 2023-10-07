@@ -1,0 +1,12 @@
+{% extends 'default.html' %}
+
+{% block content %}
+    <h1>{{ news.title }}</h1>
+    <h2>{{ news.author }}</h2>
+    <h3>{{ news.created }}</h3>
+    {% if request.user == news.author %}
+        <a href="{% url 'news_edit' pk=news.pk %}" class="button">Редактировать</a>
+    {% endif %}
+    <hr>
+    <h3>{{ news.content|safe }}</h3>
+{% endblock content %}

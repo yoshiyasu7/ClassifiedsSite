@@ -1,0 +1,15 @@
+{% extends 'default.html' %}
+
+{% block content %}
+    <h1>{{ classified.title }}</h1>
+    <h2>{{ classified.author }}</h2>
+    {% if request.user == classified.author %}
+        <a href="{% url 'classified_edit' pk=classified.pk %}" class="button">Редактировать</a>
+    {% endif %}
+    {% if user.is_authenticated %}
+        <hr>
+            <a href="{% url 'reply_create' pk=classified.pk %}" class="button">Оставить отклик</a>
+        <hr>
+    {% endif %}
+    <h3>{{ classified.content|safe }}</h3>
+{% endblock content %}
